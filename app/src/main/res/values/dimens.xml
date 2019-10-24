@@ -1,0 +1,14 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- 当进度默认宽度 -->
+    <dimen name="progress_current_width">4dp</dimen>
+    <!-- 总进度宽度 -->
+    <dimen name="progress_total_width">2dp</dimen>
+    <!-- 控件默认大小 -->
+    <dimen name="weidght_size">70dp</dimen>
+
+</resources>
