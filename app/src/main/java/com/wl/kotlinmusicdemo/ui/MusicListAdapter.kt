@@ -10,15 +10,11 @@ import com.wl.kotlinmusicdemo.R
 import com.wl.kotlinmusicdemo.musicmodel.Music
 import kotlinx.android.synthetic.main.list_item.view.*
 
-class MusicListAdapter(musicList: MutableList<Music>,context: Context): RecyclerView.Adapter<MusicListAdapter.ViewHoler>(),View.OnClickListener {
+class MusicListAdapter(private val musicList: MutableList<Music>,private val context: Context): RecyclerView.Adapter<MusicListAdapter.ViewHoler>(),View.OnClickListener {
 
     private var onItemClickListener:OnItemClickListener?=null
-    private var musicList:MutableList<Music>?=null
-    private var context:Context?=null
-    init {
-        this.musicList=musicList
-        this.context=context
-    }
+
+
 
     override fun onBindViewHolder(holder: ViewHoler, position: Int) {
             holder.itemView.setOnClickListener(View.OnClickListener {
@@ -45,8 +41,6 @@ class MusicListAdapter(musicList: MutableList<Music>,context: Context): Recycler
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHoler {
         var v=View.inflate(context,R.layout.list_item,null)
         v.setOnClickListener(this)
-
-
         return  ViewHoler(v)
     }
 

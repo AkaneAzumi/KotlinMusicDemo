@@ -7,7 +7,7 @@ import com.wl.kotlinmusicdemo.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private var viewModel:MainViewModel?=null;
+    private var viewModel:MainViewModel?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
