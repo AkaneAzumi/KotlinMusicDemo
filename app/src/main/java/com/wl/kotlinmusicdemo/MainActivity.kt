@@ -1,23 +1,35 @@
 package com.wl.kotlinmusicdemo
 
 import android.Manifest
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wl.kotlinmusicdemo.musicmodel.Music
 import com.wl.kotlinmusicdemo.musicmodel.getMusicListFromPhone
+import com.wl.kotlinmusicdemo.service.MusicService
 import com.wl.kotlinmusicdemo.ui.MusicListAdapter
+import com.wl.kotlinmusicdemo.utils.ProgressData
 import com.wl.kotlinmusicdemo.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
 @Suppress("UNREACHABLE_CODE")
-class MainActivity : AppCompatActivity(),View.OnClickListener {
+class MainActivity : AppCompatActivity(),View.OnClickListener  {
 
 
 
@@ -40,10 +52,27 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     private var rotationS:Float=0f
     private var music_lists:MutableList<Music>?=null
     private var permissionList= mutableSetOf<String>()
+    enum class play_ctrl_type{
+        NEXT,
+        PREVIOUS,
+        PAUSE,
+        PLAY
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        startService(Intent(this,MusicService::class.java))
         requsetPermission()
 
     }
@@ -56,6 +85,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         if (permissionList.isNotEmpty()){
             ActivityCompat.requestPermissions(this,permissionList.toTypedArray(),0)
         }else{
+
             initViewModel()
             initView()
             initTimer()
@@ -82,9 +112,18 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onReceiveProgress(progressdata:ProgressData){
+        Log.i(TAG,"progress is ${progressdata.progress_data}")
+    }
+
     fun initViewModel(){
         viewModel=ViewModelProviders.of(this).get(MainViewModel::class.java)
         music_lists= getMusicListFromPhone(this)
+        initObserver()
+    }
+
+    fun initObserver(){
     }
 
     fun initView(){
@@ -102,7 +141,6 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
 
     fun initTimer(){
         timer=Timer("TimerRun")
-
         timer_imgrun=object :TimerTask(){
             override fun run() {
                runOnUiThread {
@@ -118,11 +156,12 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
                }
             }
         }
-
         timer?.schedule(timer_imgrun,0,80)
     }
 
+
     companion object{
+        private const val TAG="MainActivity"
         private val permissions= listOf(
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
