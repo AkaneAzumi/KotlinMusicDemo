@@ -53,7 +53,7 @@ class MusicListAdapter(private val musicList: MutableList<Music>,private val con
 
     }
 
-    private fun setOnItemClickListener(onItemClickListener: OnItemClickListener){
+    open fun setOnItemClickListener(onItemClickListener: OnItemClickListener){
         this.onItemClickListener=onItemClickListener
     }
      interface OnItemClickListener{
