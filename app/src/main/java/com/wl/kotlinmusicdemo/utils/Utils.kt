@@ -14,5 +14,5 @@ fun timeFormat(time:Int):String{
 fun sizeFormat(size:Int):String{
     var big:BigDecimal= BigDecimal(size)
     var tem:Double=big.setScale(2,BigDecimal.ROUND_HALF_UP).toDouble()
-    return tem as String
+    return tem.toString()
 }

@@ -15,11 +15,19 @@ class MusicListAdapter(private val musicList: MutableList<Music>,private val con
     private var onItemClickListener:OnItemClickListener?=null
 
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
 
     override fun onBindViewHolder(holder: ViewHoler, position: Int) {
             holder.itemView.setOnClickListener(View.OnClickListener {
                 onItemClickListener?.OnItemClick(holder.itemView,holder.layoutPosition)
             })
+        holder.size_textView.text=musicList[position].music_size
+        holder.title_textView.text=musicList[position].music_name
+        holder.time_textView.text=musicList[position].music_time
+        holder.artist_textView.text=musicList[position].music_artist
         if (musicList?.get(position)?.isChecked!!){
             holder.artist_textView?.setTextColor(context!!.resources.getColor(R.color.main_color))
             holder.time_textView?.setTextColor(context!!.resources.getColor(R.color.main_color))
@@ -36,6 +44,10 @@ class MusicListAdapter(private val musicList: MutableList<Music>,private val con
 
     override fun getItemCount(): Int {
         return musicList!!.size
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHoler {

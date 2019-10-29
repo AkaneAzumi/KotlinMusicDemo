@@ -1,10 +1,17 @@
 package com.wl.kotlinmusicdemo.service
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.IBinder
+import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.wl.kotlinmusicdemo.MainActivity
+import com.wl.kotlinmusicdemo.databean.MainToService
 import com.wl.kotlinmusicdemo.musicmodel.Music
 import com.wl.kotlinmusicdemo.musicmodel.getMusicListFromPhone
 import com.wl.kotlinmusicdemo.utils.ProgressData
@@ -16,7 +23,7 @@ import java.util.*
 
 class MusicService :Service(){
     private var mediaPlayer:MediaPlayer=MediaPlayer()
-    private var list= getMusicListFromPhone(this)
+    private var list:MutableList<Music>?=null
     private var currentTime:Long?=null
     private var currentMusic:Music?=null
     private var currentPostion:Int=0
@@ -28,21 +35,33 @@ class MusicService :Service(){
         LIST_ALL_LOOP
     }
     private var ctrlCode=List_Ctrl_Code.LIST_ALL_LOOP
+
     override fun onCreate() {
         super.onCreate()
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+            var manager:NotificationManager=getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(NotificationChannel("40","MYMusicService",NotificationManager.IMPORTANCE_DEFAULT))
+            var builder:NotificationCompat.Builder=NotificationCompat.Builder(this,"40")
+            startForeground(2,builder.build())
+        }
         EventBus.getDefault().register(this)
+        list= getMusicListFromPhone(this)
         initTimer()
+
     }
 
     fun initTimer(){
         timer= Timer("postProgress")
         postProgress=object:TimerTask(){
             override fun run() {
-                var progress=ProgressData((mediaPlayer.currentPosition as Float)/(mediaPlayer.duration as Float))
+                if (mediaPlayer.isPlaying){
+                    var progress=ProgressData(100*(mediaPlayer.currentPosition.toFloat())/(mediaPlayer.duration.toFloat()))
 
-                var current_time_string= timeFormat(mediaPlayer.currentPosition)
-                EventBus.getDefault().post(progress)
-                EventBus.getDefault().post(current_time_string)
+                    var current_time_string= timeFormat(mediaPlayer.currentPosition)
+                    EventBus.getDefault().post(progress)
+                    EventBus.getDefault().post(current_time_string)
+                }
+
             }
 
 
@@ -70,7 +89,7 @@ class MusicService :Service(){
     //播放音乐的共用方法
     fun onStart(){
         mediaPlayer.reset()
-        mediaPlayer.setDataSource(currentMusic?.music_url)
+        mediaPlayer.setDataSource(list?.get(currentPostion)?.music_url)
         mediaPlayer.prepare()
         mediaPlayer.start()
         mediaPlayer.setOnCompletionListener{
@@ -86,16 +105,16 @@ class MusicService :Service(){
            currentPostion++
            when(ctrlCode){
                List_Ctrl_Code.LIST_LOOP->
-                   if (currentPostion===list.size){
+                   if (currentPostion=== list!!.size){
                        mediaPlayer.stop()
                    }
                List_Ctrl_Code.LIST_ALL_LOOP,List_Ctrl_Code.SINGLE_LOOP->{
-                   if (currentPostion===list.size){
+                   if (currentPostion=== list!!.size){
                        currentPostion=0
                    }
                }
            }
-           currentMusic=list[currentPostion]
+           currentMusic= list?.get(currentPostion)
            EventBus.getDefault().post(currentPostion)
            EventBus.getDefault().post(currentMusic)
            onStart()
@@ -113,12 +132,12 @@ class MusicService :Service(){
                     }
                 List_Ctrl_Code.LIST_ALL_LOOP,List_Ctrl_Code.SINGLE_LOOP->{
                     if (currentPostion<0){
-                        currentPostion=list.size-1
+                        currentPostion= list!!.size-1
                     }
                 }
 
             }
-            currentMusic=list[currentPostion]
+            currentMusic= list?.get(currentPostion)
             EventBus.getDefault().post(currentPostion)
             EventBus.getDefault().post(currentMusic)
             onStart()
@@ -144,7 +163,7 @@ class MusicService :Service(){
 
 
     @Subscribe
-    private fun  getCtrlType(ctrlplay_ctrl_type: MainActivity.play_ctrl_type){
+    fun  getCtrlType(ctrlplay_ctrl_type: MainActivity.play_ctrl_type){
         when(ctrlplay_ctrl_type){
             MainActivity.play_ctrl_type.NEXT-> onNext()
             MainActivity.play_ctrl_type.PREVIOUS->onPervoius()
@@ -152,6 +171,11 @@ class MusicService :Service(){
             MainActivity.play_ctrl_type.PLAY->onPlay()
             MainActivity.play_ctrl_type.START->onStart()
         }
+    }
+
+    @Subscribe
+    fun  getCurrentFromMain(mainToService: MainToService){
+        currentPostion=mainToService.current
     }
 
 
