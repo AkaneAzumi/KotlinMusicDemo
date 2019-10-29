@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wl.kotlinmusicdemo.databean.MainToService
+import com.wl.kotlinmusicdemo.databean.ServiceToMain
 import com.wl.kotlinmusicdemo.musicmodel.Music
 import com.wl.kotlinmusicdemo.musicmodel.getMusicListFromPhone
 import com.wl.kotlinmusicdemo.service.MusicService
@@ -134,13 +135,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     //获取currentposition并更新界面
     @Subscribe
-    fun onReceiveMusic(position: Int) {
-        currentpositon = position
+    fun onReceiveMusic(serviceToMain: ServiceToMain) {
+        currentpositon = serviceToMain.current
         updateView()
     }
 
     //通用的更新界面方法
     fun updateView() {
+        rotationS=0f
         isCheck=true
         music_title.text = music_lists?.get(currentpositon)!!.music_name
         music_artist.text = music_lists?.get(currentpositon)!!.music_artist

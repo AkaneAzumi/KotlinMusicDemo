@@ -12,7 +12,7 @@ fun timeFormat(time:Int):String{
 }
 
 fun sizeFormat(size:Int):String{
-    var big:BigDecimal= BigDecimal(size)
+    var big:BigDecimal= BigDecimal(size.toDouble()/1048576)
     var tem:Double=big.setScale(2,BigDecimal.ROUND_HALF_UP).toDouble()
-    return tem.toString()
+    return "${tem}MB"
 }

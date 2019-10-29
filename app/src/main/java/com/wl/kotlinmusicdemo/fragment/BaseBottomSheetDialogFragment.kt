@@ -13,7 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.wl.kotlinmusicdemo.R
 
-class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
+open class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     private var behavior:BottomSheetBehavior<FrameLayout>?=null
     private val height:Int
