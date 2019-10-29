@@ -56,7 +56,8 @@ class MainActivity : AppCompatActivity(),View.OnClickListener  {
         NEXT,
         PREVIOUS,
         PAUSE,
-        PLAY
+        PLAY,
+        START
     }
 
     override fun onStart() {
@@ -116,6 +117,12 @@ class MainActivity : AppCompatActivity(),View.OnClickListener  {
     fun onReceiveProgress(progressdata:ProgressData){
         Log.i(TAG,"progress is ${progressdata.progress_data}")
     }
+
+    @Subscribe
+    fun onReceiveMusic(progressdata: ProgressData){
+        play_ctrl_btn.progress=progressdata.progress_data as Int
+    }
+
 
     fun initViewModel(){
         viewModel=ViewModelProviders.of(this).get(MainViewModel::class.java)
