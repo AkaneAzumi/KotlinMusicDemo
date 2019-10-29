@@ -15,6 +15,7 @@ import com.wl.kotlinmusicdemo.R
 
 open class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
+    private var topSet:Int=0
     private var behavior:BottomSheetBehavior<FrameLayout>?=null
     private val height:Int
     @SuppressLint("ServiceCast")
@@ -25,7 +26,7 @@ open class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
             val point=Point()
             if (wm!=null){
                 wm.defaultDisplay.getSize(point)
-                height=point.y
+                height=point.y-topSet
             }
         }
         return height
@@ -50,6 +51,9 @@ open class BaseBottomSheetDialogFragment : BottomSheetDialogFragment() {
             behavior= BottomSheetBehavior.from(frameLayout)
             behavior?.state=BottomSheetBehavior.STATE_EXPANDED
         }
+    }
+    fun setTopOff(topoff:Int){
+        topSet=topoff
     }
 
 }

@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wl.kotlinmusicdemo.databean.MainToService
 import com.wl.kotlinmusicdemo.databean.ServiceToMain
+import com.wl.kotlinmusicdemo.fragment.MusicPlayingDialog
 import com.wl.kotlinmusicdemo.musicmodel.Music
 import com.wl.kotlinmusicdemo.musicmodel.getMusicListFromPhone
 import com.wl.kotlinmusicdemo.service.MusicService
@@ -47,6 +48,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 updateView()
                 play_ctrl_btn.isChecked=true
                 EventBus.getDefault().post(play_ctrl_type.NEXT)
+            }
+            ablum_image.id->{
+                Log.d(TAG,"点击了头像")
+                var musicPlayingDialog= MusicPlayingDialog()
+                musicPlayingDialog.show(supportFragmentManager,"Dialog")
             }
         }
     }
@@ -181,7 +187,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun initView() {
+        ablum_image.setOnClickListener(this)
         play_ctrl_next.setOnClickListener(this)
+
         play_ctrl_btn.setOnCheckChangesListener { isChecked: Boolean ->
             if (isChecked) {
                 Log.d(TAG, "播放")
@@ -196,6 +204,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
             }
         }
+
         adapter = MusicListAdapter(music_lists!!, context = this)
         adapter?.setOnItemClickListener(object : MusicListAdapter.OnItemClickListener {
             override fun OnItemClick(v: View, position: Int) {
