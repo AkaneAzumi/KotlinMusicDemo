@@ -69,13 +69,18 @@
                     android:layout_weight="1"
                     android:layout_marginLeft="3dp">
 
-                    <TextView
+                    <com.wl.kotlinmusicdemo.widget.TitleTextView
                         android:id="@+id/music_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:text="音乐名"
-                        android:textSize="15sp"/>
+                        android:textSize="15sp"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:scrollHorizontally="true"/>
 
                     <TextView
                         android:id="@+id/music_artist"

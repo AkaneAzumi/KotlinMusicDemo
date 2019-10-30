@@ -12,6 +12,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.wl.kotlinmusicdemo.MainActivity
 import com.wl.kotlinmusicdemo.databean.MainToService
+import com.wl.kotlinmusicdemo.databean.ProgressChange
+import com.wl.kotlinmusicdemo.databean.ServiceToFragment
 import com.wl.kotlinmusicdemo.databean.ServiceToMain
 import com.wl.kotlinmusicdemo.musicmodel.Music
 import com.wl.kotlinmusicdemo.musicmodel.getMusicListFromPhone
@@ -23,7 +25,7 @@ import java.util.*
 
 
 class MusicService : Service() {
-    private var mediaPlayer: MediaPlayer = MediaPlayer()
+    private val mediaPlayer: MediaPlayer = MediaPlayer()
     private var list: MutableList<Music>? = null
     private var currentTime: Long? = null
     private var currentMusic: Music? = null
@@ -70,7 +72,7 @@ class MusicService : Service() {
 
                     var current_time_string = timeFormat(mediaPlayer.currentPosition)
                     EventBus.getDefault().post(progress)
-                    EventBus.getDefault().post(current_time_string)
+                    EventBus.getDefault().post(ServiceToFragment(current_time_string))
                 }
 
             }
@@ -98,8 +100,11 @@ class MusicService : Service() {
 
     //播放音乐的共用方法
     fun onStart() {
+        currentMusic = list?.get(currentPostion)
+        EventBus.getDefault().post(ServiceToMain(currentPostion))
+        EventBus.getDefault().post(currentMusic)
         mediaPlayer.reset()
-        mediaPlayer.setDataSource(list?.get(currentPostion)?.music_url)
+        mediaPlayer.setDataSource(currentMusic?.music_url)
         mediaPlayer.prepare()
         mediaPlayer.start()
         mediaPlayer.setOnCompletionListener {
@@ -124,10 +129,8 @@ class MusicService : Service() {
                 }
             }
         }
-        currentMusic = list?.get(currentPostion)
-        EventBus.getDefault().post(ServiceToMain(currentPostion))
-        EventBus.getDefault().post(currentMusic)
         onStart()
+
     }
 
     //上一曲
@@ -144,9 +147,6 @@ class MusicService : Service() {
                 }
             }
         }
-        currentMusic = list?.get(currentPostion)
-        EventBus.getDefault().post(ServiceToMain(currentPostion))
-        EventBus.getDefault().post(currentMusic)
         onStart()
 
     }
@@ -183,6 +183,10 @@ class MusicService : Service() {
     @Subscribe
     fun getCurrentFromMain(mainToService: MainToService) {
         currentPostion = mainToService.current
+    }
+    @Subscribe
+    fun getChangeProgress(change: ProgressChange){
+        mediaPlayer.seekTo(change.change*mediaPlayer.duration/100)
     }
 
 

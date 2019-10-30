@@ -2,15 +2,22 @@ package com.wl.kotlinmusicdemo.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.MutableLiveData as MutableLiveData1
+import androidx.lifecycle.MutableLiveData
+import com.wl.kotlinmusicdemo.musicmodel.Music
 
 class MainViewModel : ViewModel() {
 
 
-    open val testData= MutableLiveData1<String>()
+    private val testData= MutableLiveData<String>()
 
 
-    open val position= MutableLiveData1<Int>()
+    private val position= MutableLiveData<Int>()
+
+    val currentMusic=MutableLiveData<Music>()
+
+    fun postCurrentMusic(music: Music){
+        currentMusic.postValue(music)
+    }
 
     fun postpositonValue(value:Int){
         position.postValue(value)

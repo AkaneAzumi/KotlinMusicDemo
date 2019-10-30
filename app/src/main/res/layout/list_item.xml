@@ -23,7 +23,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
             android:singleLine="true"
+            android:scrollHorizontally="true"
             android:text="音乐标题"
             android:textSize="15sp" />
 

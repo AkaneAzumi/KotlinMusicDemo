@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 Log.d(TAG,"点击了头像")
                 var musicPlayingDialog= MusicPlayingDialog()
                 musicPlayingDialog.show(supportFragmentManager,"Dialog")
+                music_lists?.get(currentpositon)?.let { viewModel?.postCurrentMusic(it)
+                Log.d(TAG,"发送了数据")}
             }
         }
     }

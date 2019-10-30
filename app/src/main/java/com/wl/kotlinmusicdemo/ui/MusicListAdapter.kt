@@ -30,11 +30,13 @@ class MusicListAdapter(private val musicList: MutableList<Music>,private val con
         holder.artist_textView.text=musicList[position].music_artist
         if (musicList?.get(position)?.isChecked!!){
             holder.artist_textView?.setTextColor(context!!.resources.getColor(R.color.main_color))
+            holder.title_textView.isSelected=true
             holder.time_textView?.setTextColor(context!!.resources.getColor(R.color.main_color))
             holder.title_textView?.setTextColor(context!!.resources.getColor(R.color.main_color))
             holder.size_textView?.setTextColor(context!!.resources.getColor(R.color.main_color))
         }else{
             holder.artist_textView?.setTextColor(Color.GRAY)
+            holder.title_textView.isSelected=false
             holder.time_textView?.setTextColor(Color.GRAY)
             holder.title_textView?.setTextColor(Color.GRAY)
             holder.size_textView?.setTextColor(Color.GRAY)
