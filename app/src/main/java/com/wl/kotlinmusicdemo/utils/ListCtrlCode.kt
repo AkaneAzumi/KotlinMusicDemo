@@ -1,8 +1,11 @@
 package com.wl.kotlinmusicdemo.utils
 
-enum class List_Ctrl_Code {
-    LIST_LOOP,
-    SINGLE_LOOP,
-    LIST_ALL_LOOP,
-    RONDOM
+class ListCtrlCode(listCtrlCode: Int){
+    var listCtrlCode=listCtrlCode
+    companion object{
+        var LIST_ALL_LOOP=1
+        var SINGLE_LOOP=2
+        var RONDOM=3
+    }
+
 }

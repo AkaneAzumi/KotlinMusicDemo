@@ -8,34 +8,39 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.wl.kotlinmusicdemo.databean.*
 import com.wl.kotlinmusicdemo.musicmodel.Music
 import com.wl.kotlinmusicdemo.musicmodel.getMusicListFromPhone
-import com.wl.kotlinmusicdemo.utils.List_Ctrl_Code
 import com.wl.kotlinmusicdemo.databean.ProgressData
-import com.wl.kotlinmusicdemo.utils.play_ctrl_type
-import com.wl.kotlinmusicdemo.utils.timeFormat
+import com.wl.kotlinmusicdemo.utils.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.util.*
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 
 class MusicService : Service() {
     private val mediaPlayer: MediaPlayer = MediaPlayer()
     private var list: MutableList<Music>? = null
-    private var currentTime: Long? = null
     private var currentMusic: Music? = null
     private var currentPostion: Int = 0
     private var timer: Timer? = null
     private var postProgress: TimerTask? = null
     private var postStatus: TimerTask? = null
+    private var sharedPrefrenceUtils=SharedPrefrenceUtils(this)
 
 
-    private var ctrlCode = List_Ctrl_Code.LIST_ALL_LOOP
+    private var ctrlCode = ListCtrlCode.LIST_ALL_LOOP
 
     override fun onCreate() {
         super.onCreate()
+        sharedPrefrenceUtils.getData("CtrlCode",1)?.let {
+            ctrlCode=it as Int
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             var manager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -60,8 +65,6 @@ class MusicService : Service() {
         postProgress = object : TimerTask() {
             override fun run() {
                 try {
-
-
                     if (mediaPlayer.isPlaying) {
                         var progress =
                             ProgressData(100 * (mediaPlayer.currentPosition.toFloat()) / (mediaPlayer.duration.toFloat()))
@@ -121,14 +124,19 @@ class MusicService : Service() {
             currentMusic = list?.get(currentPostion)
             EventBus.getDefault().post(ServiceToMain(currentPostion))
             EventBus.getDefault().postSticky(currentMusic)
+            sharedPrefrenceUtils.SaveData("Music",currentMusic!!)
             mediaPlayer.reset()
             mediaPlayer.setDataSource(currentMusic?.music_url)
             mediaPlayer.prepare()
             mediaPlayer.start()
             mediaPlayer.setOnCompletionListener {
                 when (ctrlCode) {
-                    List_Ctrl_Code.SINGLE_LOOP -> mediaPlayer.isLooping = true
-                    List_Ctrl_Code.LIST_LOOP, List_Ctrl_Code.LIST_ALL_LOOP -> onNext()
+                    ListCtrlCode.SINGLE_LOOP ->{
+                        it.start()
+                        it.isLooping = true
+                    }
+                    ListCtrlCode.LIST_ALL_LOOP ,ListCtrlCode.RONDOM-> onNext()
+
                 }
             }
         } catch (e: IllegalStateException) {
@@ -141,14 +149,14 @@ class MusicService : Service() {
         try {
             currentPostion++
             when (ctrlCode) {
-                List_Ctrl_Code.LIST_LOOP ->
-                    if (currentPostion == list!!.size) {
-                        mediaPlayer.stop()
-                    }
-                List_Ctrl_Code.LIST_ALL_LOOP, List_Ctrl_Code.SINGLE_LOOP -> {
+                ListCtrlCode.LIST_ALL_LOOP, ListCtrlCode.SINGLE_LOOP -> {
                     if (currentPostion == list!!.size) {
                         currentPostion = 0
                     }
+                }
+                ListCtrlCode.RONDOM->{
+                    var r= Random
+                    currentPostion=r.nextInt(list!!.size)
                 }
             }
             onStart()
@@ -164,14 +172,14 @@ class MusicService : Service() {
 
             currentPostion--
             when (ctrlCode) {
-                List_Ctrl_Code.LIST_LOOP ->
-                    if (currentPostion < 0) {
-                        mediaPlayer.stop()
-                    }
-                List_Ctrl_Code.LIST_ALL_LOOP, List_Ctrl_Code.SINGLE_LOOP -> {
+                ListCtrlCode.LIST_ALL_LOOP, ListCtrlCode.SINGLE_LOOP -> {
                     if (currentPostion < 0) {
                         currentPostion = list!!.size - 1
                     }
+                }
+                ListCtrlCode.RONDOM->{
+                    var r= Random
+                    currentPostion=r.nextInt(list!!.size)
                 }
             }
             onStart()
@@ -193,9 +201,15 @@ class MusicService : Service() {
         }
     }
 
+    fun releaseMedia(){
+        mediaPlayer.stop()
+        mediaPlayer?.release()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
+        releaseMedia()
         releaseTimer()
     }
 
@@ -203,15 +217,20 @@ class MusicService : Service() {
         return null
     }
 
+    @Subscribe
+    fun getListType(Code: ListCtrlCode){
+        ctrlCode=Code.listCtrlCode
+    }
+
 
     @Subscribe
-    fun getCtrlType(ctrlplay_ctrl_type: play_ctrl_type) {
-        when (ctrlplay_ctrl_type) {
-            play_ctrl_type.NEXT -> onNext()
-            play_ctrl_type.PREVIOUS -> onPervoius()
-            play_ctrl_type.PAUSE -> onPause()
-            play_ctrl_type.PLAY -> onPlay()
-            play_ctrl_type.START -> onStart()
+    fun getCtrlType(ctrlType: playCtrlType) {
+        when (ctrlType.playCtrlType) {
+            playCtrlType.NEXT -> onNext()
+            playCtrlType.PREVIOUS -> onPervoius()
+            playCtrlType.PAUSE -> onPause()
+            playCtrlType.PLAY -> onPlay()
+            playCtrlType.START -> onStart()
         }
     }
 

@@ -22,13 +22,16 @@ import com.wl.kotlinmusicdemo.musicmodel.getMusicListFromPhone
 import com.wl.kotlinmusicdemo.service.MusicService
 import com.wl.kotlinmusicdemo.ui.MusicListAdapter
 import com.wl.kotlinmusicdemo.databean.ProgressData
-import com.wl.kotlinmusicdemo.utils.List_Ctrl_Code
-import com.wl.kotlinmusicdemo.utils.play_ctrl_type
+import com.wl.kotlinmusicdemo.utils.SharedPrefrenceUtils
+
+import com.wl.kotlinmusicdemo.utils.playCtrlType
+
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.lang.Exception
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Suppress("UNREACHABLE_CODE")
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -39,29 +42,51 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         when (p0?.id) {
             play_ctrl_next.id -> {
                 play_ctrl_btn.isChecked=true
-                EventBus.getDefault().post(play_ctrl_type.NEXT)
+                EventBus.getDefault().post(playCtrlType(playCtrlType.NEXT))
             }
             ablum_image.id->{
-                Log.d(TAG,"点击了头像")
-                var musicPlayingDialog= MusicPlayingDialog()
                 musicPlayingDialog.show(supportFragmentManager,"Dialog")
-                EventBus.getDefault().postSticky(music_lists?.get(currentpositon))
+                EventBus.getDefault().postSticky(currentMusic)
+
             }
         }
     }
 
-    private var currentpositon: Int = 0
+    private var musicPlayingDialog= MusicPlayingDialog()
+
+    private var currentMusic: Music?=null
     private var timer: Timer? = null
     private var timer_imgrun: TimerTask? = null
     private var isCheck: Boolean = false
     private var adapter: MusicListAdapter? = null
     private var rotationS: Float = 0f
-    private var music_lists: MutableList<Music>? = null
-    private var permissionList = mutableSetOf<String>()
+    private var music_lists:MutableList<Music>?=null
+    var permissionList = mutableSetOf<String>()
 
     override fun onStart() {
+        music_lists=getMusicListFromPhone(this)
+
         super.onStart()
-        EventBus.getDefault().register(this)
+
+        if(!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this)
+        }
+
+    }
+
+    override fun onResume() {
+        var sharedPrefrenceUtils=SharedPrefrenceUtils(applicationContext)
+       (sharedPrefrenceUtils.getData("Music",Music()))?.let {
+           currentMusic=it as Music
+           Log.d(TAG,"恢复界面${it.music_name}")
+           updateView(currentMusic)
+
+
+       }
+
+
+
+        super.onResume()
     }
 
 
@@ -125,36 +150,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     //获取currentposition并更新界面
     @Subscribe
     fun onReceiveMusic(serviceToMain: ServiceToMain) {
-        currentpositon = serviceToMain.current
-        updateView()
+        currentMusic = music_lists?.get(serviceToMain.current)
+        updateView(currentMusic)
     }
 
     //通用的更新界面方法
-    fun updateView() {
+    fun updateView(music: Music?) {
         rotationS=0f
-        music_title.text = music_lists?.get(currentpositon)!!.music_name
-        music_artist.text = music_lists?.get(currentpositon)!!.music_artist
+        music_title.text = music?.music_name
+        music_artist.text = music?.music_artist
         var imgUri = Uri.parse(
-            "content://media/external/audio/media/${music_lists!![currentpositon].music_id}/albumart"
+            "content://media/external/audio/media/${music?.music_id}/albumart"
         )
         try {
             var bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imgUri)
                 ablum_image.setImageBitmap(bitmap)
-
         }catch (e:Exception){
-            ablum_image.setImageDrawable(getDrawable(R.drawable.defult_ablum_img))
-
+            ablum_image.setImageDrawable(getDrawable(R.drawable.testimg))
             e.printStackTrace()
         }
-
-
         music_lists!!.find { it.isChecked===true
         }?.let {
             it.isChecked=false
         }
-        music_lists!![currentpositon].isChecked=true
+        music?.isChecked=true
         adapter?.notifyDataSetChanged()
-        EventBus.getDefault().post(MainToService(currentpositon))
     }
 
 
@@ -165,7 +185,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun initView() {
-        music_lists = getMusicListFromPhone(this)
 
         ablum_image.setOnClickListener(this)
         play_ctrl_next.setOnClickListener(this)
@@ -173,11 +192,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         play_ctrl_btn.setOnCheckChangesListener { isChecked: Boolean ->
             if (isChecked) {
                 Log.d(TAG, "播放")
-                EventBus.getDefault().post(play_ctrl_type.PLAY)
+                EventBus.getDefault().post(playCtrlType(playCtrlType.PLAY))
 
             } else {
                 Log.d(TAG, "暂停")
-                EventBus.getDefault().post(play_ctrl_type.PAUSE)
+                EventBus.getDefault().post(playCtrlType(playCtrlType.PAUSE))
 
 
             }
@@ -186,10 +205,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         adapter = MusicListAdapter(music_lists!!, context = this)
         adapter?.setOnItemClickListener(object : MusicListAdapter.OnItemClickListener {
             override fun OnItemClick(v: View, position: Int) {
-                this@MainActivity.currentpositon = position
+
+                EventBus.getDefault().post(MainToService(position))
+                currentMusic=music_lists?.get(position)
                 play_ctrl_btn.isChecked=true
-                updateView()
-                EventBus.getDefault().post(play_ctrl_type.START)
+                updateView(currentMusic)
+                EventBus.getDefault().post(playCtrlType(playCtrlType.START))
             }
         })
         adapter?.setHasStableIds(true)

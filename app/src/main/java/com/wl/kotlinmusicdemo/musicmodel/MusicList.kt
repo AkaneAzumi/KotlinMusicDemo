@@ -5,8 +5,8 @@ import android.provider.MediaStore
 import com.wl.kotlinmusicdemo.utils.sizeFormat
 import com.wl.kotlinmusicdemo.utils.timeFormat
 
-fun getMusicListFromPhone(context:Context):MutableList<Music>{
-    val list:MutableList<Music> = ArrayList()
+fun getMusicListFromPhone(context:Context): MutableList<Music> {
+    val list:MutableList<Music> =  ArrayList<Music>()
     val cursor=context.contentResolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,null,null,
         MediaStore.Audio.Media.DEFAULT_SORT_ORDER)
     if (cursor!=null){

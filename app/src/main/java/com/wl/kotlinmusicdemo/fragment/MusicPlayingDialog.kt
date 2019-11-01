@@ -18,7 +18,9 @@ import androidx.renderscript.ScriptIntrinsicBlur
 import com.wl.kotlinmusicdemo.R
 import com.wl.kotlinmusicdemo.databean.*
 import com.wl.kotlinmusicdemo.musicmodel.Music
-import com.wl.kotlinmusicdemo.utils.play_ctrl_type
+import com.wl.kotlinmusicdemo.utils.ListCtrlCode
+import com.wl.kotlinmusicdemo.utils.SharedPrefrenceUtils
+import com.wl.kotlinmusicdemo.utils.playCtrlType
 import kotlinx.android.synthetic.main.music_playing_layout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -31,19 +33,37 @@ class MusicPlayingDialog : BaseBottomSheetDialogFragment(), View.OnClickListener
         when (p0?.id) {
             ctrl_btn.id -> {
                 if (isCheck) {
-                    EventBus.getDefault().post(play_ctrl_type.PAUSE)
+                    EventBus.getDefault().post(playCtrlType(playCtrlType.PAUSE))
                 } else {
-                    EventBus.getDefault().post(play_ctrl_type.PLAY)
+                    EventBus.getDefault().post(playCtrlType(playCtrlType.PLAY))
                 }
             }
             next_btn.id -> {
-                EventBus.getDefault().post(play_ctrl_type.NEXT)
+                EventBus.getDefault().post(playCtrlType(playCtrlType.NEXT))
             }
             pre_btn.id -> {
-                EventBus.getDefault().post(play_ctrl_type.PREVIOUS)
+                EventBus.getDefault().post(playCtrlType(playCtrlType.PREVIOUS))
             }
             play_ctrl_img.id -> {
+                when(listCtrlCode){
+                    ListCtrlCode.LIST_ALL_LOOP->{
+                        EventBus.getDefault().post(ListCtrlCode(ListCtrlCode.RONDOM))
+                        listCtrlCode=ListCtrlCode.RONDOM
+                        play_ctrl_img.background=activity?.resources?.getDrawable(R.drawable.romdom)
+                    }
+                    ListCtrlCode.RONDOM->{
+                        EventBus.getDefault().post(ListCtrlCode(ListCtrlCode.SINGLE_LOOP))
+                        listCtrlCode=ListCtrlCode.SINGLE_LOOP
+                        play_ctrl_img.background=activity?.resources?.getDrawable(R.drawable.singl)
+                    }
+                    ListCtrlCode.SINGLE_LOOP->{
+                        EventBus.getDefault().post(ListCtrlCode(ListCtrlCode.LIST_ALL_LOOP))
+                        listCtrlCode=ListCtrlCode.LIST_ALL_LOOP
+                        play_ctrl_img.background=activity?.resources?.getDrawable(R.drawable.all)
 
+                    }
+                }
+                sharedPrefrenceUtils?.SaveData("CtrlCode",listCtrlCode)
             }
         }
     }
@@ -51,9 +71,12 @@ class MusicPlayingDialog : BaseBottomSheetDialogFragment(), View.OnClickListener
     private var imaRotate: TimerTask? = null
     private var rotationS: Float = 0f
     private var isCheck = false
+    private var listCtrlCode=ListCtrlCode.LIST_ALL_LOOP
+    private var sharedPrefrenceUtils:SharedPrefrenceUtils?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPrefrenceUtils=SharedPrefrenceUtils(activity!!)
         EventBus.getDefault().register(this)
     }
 
@@ -111,7 +134,7 @@ class MusicPlayingDialog : BaseBottomSheetDialogFragment(), View.OnClickListener
     }
 
 
-    private fun UpdateView(cunrrentMusic: Music) {
+    private fun UpdateView(cunrrentMusic: Music){
         rotationS = 0f
         playing_title.text = cunrrentMusic.music_name
         playing_artist.text = cunrrentMusic.music_artist
@@ -124,14 +147,14 @@ class MusicPlayingDialog : BaseBottomSheetDialogFragment(), View.OnClickListener
             val bitmap1 = MediaStore.Images.Media.getBitmap(activity?.contentResolver, uri)
             play_ground.background = BitmapDrawable(resBitmap(bitmap1))
         } catch (e: Exception) {
-            circleImageView.setImageDrawable(resources.getDrawable(R.drawable.defult_ablum_img))
+            circleImageView.setImageDrawable(resources.getDrawable(R.drawable.testimg))
             var opition = BitmapFactory.Options()
             opition.inSampleSize = 40
             play_ground.background = BitmapDrawable(
                 resBitmap(
                     BitmapFactory.decodeResource(
                         resources,
-                        R.drawable.defult_ablum_img,
+                        R.drawable.testimg,
                         opition
                     )
                 )
