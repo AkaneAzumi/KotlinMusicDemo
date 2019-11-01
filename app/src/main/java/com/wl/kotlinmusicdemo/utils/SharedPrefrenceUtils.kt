@@ -29,7 +29,7 @@ class SharedPrefrenceUtils(context: Context?) {
             var json=sharedPreferences?.getString(key, String())
             var music=gson.fromJson(json,Music::class.java)
             return music
-        }else if (any is ListCtrlCode){
+        }else if (any is Int){
             var code=sharedPreferences?.getInt(key,0)
             return code
         }

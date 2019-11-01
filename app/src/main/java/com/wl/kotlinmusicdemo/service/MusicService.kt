@@ -30,7 +30,7 @@ class MusicService : Service() {
     private var timer: Timer? = null
     private var postProgress: TimerTask? = null
     private var postStatus: TimerTask? = null
-    private var sharedPrefrenceUtils=SharedPrefrenceUtils(this)
+    private var sharedPrefrenceUtils:SharedPrefrenceUtils=SharedPrefrenceUtils(this)
 
 
     private var ctrlCode = ListCtrlCode.LIST_ALL_LOOP
@@ -39,6 +39,7 @@ class MusicService : Service() {
         super.onCreate()
         sharedPrefrenceUtils.getData("CtrlCode",1)?.let {
             ctrlCode=it as Int
+            Log.d("CODE SI","$ctrlCode")
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -63,7 +63,9 @@ class MusicPlayingDialog : BaseBottomSheetDialogFragment(), View.OnClickListener
 
                     }
                 }
-                sharedPrefrenceUtils?.SaveData("CtrlCode",listCtrlCode)
+                sharedPrefrenceUtils?.let {
+                    Log.d("SAVE","SUCCESS")
+                    it.SaveData("CtrlCode",listCtrlCode) }
             }
         }
     }
@@ -76,7 +78,7 @@ class MusicPlayingDialog : BaseBottomSheetDialogFragment(), View.OnClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPrefrenceUtils=SharedPrefrenceUtils(activity!!)
+        sharedPrefrenceUtils=SharedPrefrenceUtils(activity)
         EventBus.getDefault().register(this)
     }
 
@@ -95,6 +97,20 @@ class MusicPlayingDialog : BaseBottomSheetDialogFragment(), View.OnClickListener
         pre_btn.setOnClickListener(this)
         playing_list.setOnClickListener(this)
         play_ctrl_img.setOnClickListener(this)
+        when(sharedPrefrenceUtils?.getData("CtrlCode",0)){
+            ListCtrlCode.LIST_ALL_LOOP->{
+                play_ctrl_img.background=activity?.resources?.getDrawable(R.drawable.all)
+                listCtrlCode=ListCtrlCode.LIST_ALL_LOOP
+            }
+            ListCtrlCode.SINGLE_LOOP->{
+                play_ctrl_img.background=activity?.resources?.getDrawable(R.drawable.singl)
+                listCtrlCode=ListCtrlCode.SINGLE_LOOP
+            }
+            ListCtrlCode.RONDOM->{
+                play_ctrl_img.background=activity?.resources?.getDrawable(R.drawable.romdom)
+                listCtrlCode=ListCtrlCode.RONDOM
+            }
+        }
         progress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
             }

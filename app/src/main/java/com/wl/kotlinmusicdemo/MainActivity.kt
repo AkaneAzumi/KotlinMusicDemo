@@ -162,9 +162,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         var imgUri = Uri.parse(
             "content://media/external/audio/media/${music?.music_id}/albumart"
         )
+
         try {
             var bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imgUri)
-                ablum_image.setImageBitmap(bitmap)
+            ablum_image.setImageBitmap(bitmap)
+
         }catch (e:Exception){
             ablum_image.setImageDrawable(getDrawable(R.drawable.testimg))
             e.printStackTrace()
