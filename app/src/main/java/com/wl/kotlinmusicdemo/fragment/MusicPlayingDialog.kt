@@ -20,6 +20,7 @@ import com.wl.kotlinmusicdemo.databean.*
 import com.wl.kotlinmusicdemo.musicmodel.Music
 import com.wl.kotlinmusicdemo.utils.ListCtrlCode
 import com.wl.kotlinmusicdemo.utils.SharedPrefrenceUtils
+import com.wl.kotlinmusicdemo.utils.StatusbarUtil
 import com.wl.kotlinmusicdemo.utils.playCtrlType
 import kotlinx.android.synthetic.main.music_playing_layout.*
 import org.greenrobot.eventbus.EventBus
@@ -67,6 +68,9 @@ class MusicPlayingDialog : BaseBottomSheetDialogFragment(), View.OnClickListener
                     Log.d("SAVE","SUCCESS")
                     it.SaveData("CtrlCode",listCtrlCode) }
             }
+            playing_list.id->{
+
+            }
         }
     }
     private var timer: Timer? = null
@@ -79,6 +83,8 @@ class MusicPlayingDialog : BaseBottomSheetDialogFragment(), View.OnClickListener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPrefrenceUtils=SharedPrefrenceUtils(activity)
+        StatusbarUtil.setRootViewFitsSystemWindows(activity,false)
+        StatusbarUtil.setTranslucentStatus(activity)
         EventBus.getDefault().register(this)
     }
 
@@ -97,6 +103,7 @@ class MusicPlayingDialog : BaseBottomSheetDialogFragment(), View.OnClickListener
         pre_btn.setOnClickListener(this)
         playing_list.setOnClickListener(this)
         play_ctrl_img.setOnClickListener(this)
+
         activity?.runOnUiThread{
             when(sharedPrefrenceUtils?.getData("CtrlCode",0)){
                 ListCtrlCode.LIST_ALL_LOOP->{

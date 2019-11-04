@@ -6,154 +6,170 @@
     android:layout_height="match_parent"
     android:id="@+id/play_ground">
 
-
-    <com.wl.kotlinmusicdemo.widget.CircleImageView
-        android:id="@+id/circleImageView"
-        android:layout_width="360dp"
-        android:layout_height="360dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.342"
-        app:srcCompat="@drawable/testimg" />
-
-    <Button
-        android:id="@+id/next_btn"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:background="@drawable/musicnext"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.08"
-        app:layout_constraintStart_toEndOf="@+id/ctrl_btn"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-        app:layout_constraintVertical_bias="0.597" />
-
-    <Button
-        android:id="@+id/back_btn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/arrow_down"
-        app:layout_constraintBottom_toTopOf="@+id/circleImageView"
-        app:layout_constraintEnd_toStartOf="@+id/playing_title"
-        app:layout_constraintHorizontal_bias="0.465"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/current_time"
-        android:layout_width="58dp"
-        android:layout_height="17dp"
-        android:gravity="center"
-        android:text="00：00"
-        app:layout_constraintBottom_toTopOf="@+id/ctrl_btn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-        app:layout_constraintVertical_bias="0.897" />
-
-    <Button
-        android:id="@+id/play_ctrl_img"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/all"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/pre_btn"
-        app:layout_constraintHorizontal_bias="0.517"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-        app:layout_constraintVertical_bias="0.598" />
-
-    <Button
-        android:id="@+id/pre_btn"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:background="@drawable/musicpre"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ctrl_btn"
-        app:layout_constraintHorizontal_bias="0.916"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-        app:layout_constraintVertical_bias="0.597" />
-
-    <SeekBar
-        android:id="@+id/progress"
-        android:layout_width="290dp"
-        android:layout_height="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/ctrl_btn"
-        app:layout_constraintEnd_toStartOf="@+id/max_time"
-        app:layout_constraintHorizontal_bias="0.444"
-        app:layout_constraintStart_toEndOf="@+id/current_time"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-        app:layout_constraintVertical_bias="0.902" />
-
-    <Button
-        android:id="@+id/playing_list"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/listplay"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.638"
-        app:layout_constraintStart_toEndOf="@+id/next_btn"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-        app:layout_constraintVertical_bias="0.598" />
-
-    <com.wl.kotlinmusicdemo.widget.TitleTextView
-        android:id="@+id/playing_title"
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:gravity="center"
-        android:text="TextView"
-        android:textSize="24sp"
-        android:ellipsize="marquee"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:singleLine="true"
-        android:scrollHorizontally="true"
-        app:layout_constraintBottom_toTopOf="@+id/circleImageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/playing_artist"
+    <com.wl.kotlinmusicdemo.widget.StatusBarHeightView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/circleImageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/playing_title"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/max_time"
-        android:layout_width="58dp"
-        android:layout_height="18dp"
-        android:gravity="center"
-        android:text="00：00"
-        app:layout_constraintBottom_toTopOf="@+id/ctrl_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-        app:layout_constraintVertical_bias="0.898" />
-
-    <Button
-        android:id="@+id/ctrl_btn"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:background="@drawable/play"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        app:use_type="use_padding_top"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-        app:layout_constraintVertical_bias="0.564" />
+        app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <com.wl.kotlinmusicdemo.widget.CircleImageView
+                android:id="@+id/circleImageView"
+                android:layout_width="360dp"
+                android:layout_height="360dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.49"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.342"
+                app:srcCompat="@drawable/testimg" />
+
+            <Button
+                android:id="@+id/next_btn"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:background="@drawable/musicnext"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.08"
+                app:layout_constraintStart_toEndOf="@+id/ctrl_btn"
+                app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+                app:layout_constraintVertical_bias="0.597" />
+
+            <Button
+                android:id="@+id/back_btn"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/arrow_down"
+                app:layout_constraintBottom_toTopOf="@+id/circleImageView"
+                app:layout_constraintEnd_toStartOf="@+id/playing_title"
+                app:layout_constraintHorizontal_bias="0.465"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/current_time"
+                android:layout_width="58dp"
+                android:layout_height="17dp"
+                android:gravity="center"
+                android:text="00：00"
+                app:layout_constraintBottom_toTopOf="@+id/ctrl_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+                app:layout_constraintVertical_bias="0.897" />
+
+            <Button
+                android:id="@+id/play_ctrl_img"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/all"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/pre_btn"
+                app:layout_constraintHorizontal_bias="0.517"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+                app:layout_constraintVertical_bias="0.598" />
+
+            <Button
+                android:id="@+id/pre_btn"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:background="@drawable/musicpre"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ctrl_btn"
+                app:layout_constraintHorizontal_bias="0.916"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+                app:layout_constraintVertical_bias="0.597" />
+
+            <SeekBar
+                android:id="@+id/progress"
+                android:layout_width="290dp"
+                android:layout_height="15dp"
+                app:layout_constraintBottom_toTopOf="@+id/ctrl_btn"
+                app:layout_constraintEnd_toStartOf="@+id/max_time"
+                app:layout_constraintHorizontal_bias="0.444"
+                app:layout_constraintStart_toEndOf="@+id/current_time"
+                app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+                app:layout_constraintVertical_bias="0.902" />
+
+            <Button
+                android:id="@+id/playing_list"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/listplay"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.638"
+                app:layout_constraintStart_toEndOf="@+id/next_btn"
+                app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+                app:layout_constraintVertical_bias="0.598" />
+
+            <com.wl.kotlinmusicdemo.widget.TitleTextView
+                android:id="@+id/playing_title"
+                android:layout_width="300dp"
+                android:layout_height="40dp"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="TextView"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toTopOf="@+id/circleImageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/playing_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                app:layout_constraintBottom_toTopOf="@+id/circleImageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.495"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/playing_title"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/max_time"
+                android:layout_width="58dp"
+                android:layout_height="18dp"
+                android:gravity="center"
+                android:text="00：00"
+                app:layout_constraintBottom_toTopOf="@+id/ctrl_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+                app:layout_constraintVertical_bias="0.898" />
+
+            <Button
+                android:id="@+id/ctrl_btn"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:background="@drawable/play"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.495"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+                app:layout_constraintVertical_bias="0.564" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.wl.kotlinmusicdemo.widget.StatusBarHeightView>
 </androidx.constraintlayout.widget.ConstraintLayout>
