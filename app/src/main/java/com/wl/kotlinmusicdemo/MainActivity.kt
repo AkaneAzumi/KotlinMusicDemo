@@ -12,22 +12,24 @@ import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.wl.kotlinmusicdemo.databean.MainToService
-import com.wl.kotlinmusicdemo.databean.MediaPlayerStatus
-import com.wl.kotlinmusicdemo.databean.ServiceToMain
+import com.wl.kotlinmusicdemo.databean.*
 import com.wl.kotlinmusicdemo.fragment.MusicPlayingDialog
+import com.wl.kotlinmusicdemo.musicmodel.MainViewModel
 import com.wl.kotlinmusicdemo.musicmodel.Music
 import com.wl.kotlinmusicdemo.musicmodel.getMusicListFromPhone
 import com.wl.kotlinmusicdemo.service.MusicService
 import com.wl.kotlinmusicdemo.ui.MusicListAdapter
-import com.wl.kotlinmusicdemo.databean.ProgressData
 import com.wl.kotlinmusicdemo.utils.SharedPrefrenceUtils
+import com.wl.kotlinmusicdemo.utils.StatusbarUtil
 import com.wl.kotlinmusicdemo.utils.playCtrlType
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.rightdrawlayout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.lang.Exception
 import java.util.*
 
@@ -48,9 +50,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 musicPlayingDialog.show(supportFragmentManager,"Dialog")
                 EventBus.getDefault().postSticky(music_lists?.get(currentpositon))
             }
+            quite.id->{
+                stopService(Intent(this, MusicService::class.java))
+                finish()
+
+            }
+
         }
     }
 
+    private lateinit var mainViewModel: MainViewModel
     private var currentpositon: Int = 0
     private var timer: Timer? = null
     private var timer_imgrun: TimerTask? = null
@@ -70,6 +79,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         sharedPrefrenceUtils?.getData("Music",Music())?.let {
             updateView(it as Music)
         }
+        sharedPrefrenceUtils?.getData("imgUri",Uri.parse(""))?.let{
+            var imguri=Uri.parse(it as String )
+            background_image.setImageURI(imguri)
+        }
         super.onResume()
     }
 
@@ -77,6 +90,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        StatusbarUtil.setRootViewFitsSystemWindows(this,false)
+        StatusbarUtil.setTranslucentStatus(this)
         requsetPermission()
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.O){
             startForegroundService(Intent(this, MusicService::class.java))
@@ -84,6 +99,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             startService(Intent(this, MusicService::class.java))
 
         }
+
 
     }
 
@@ -118,6 +134,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 initTimer()
             }
         }
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN_ORDERED)
+    fun setBackGround(imageUri: BackGroundUri){
+        background_image.setImageURI(imageUri.imageUri)
     }
 
     @Subscribe(sticky = true)
@@ -178,6 +199,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun initView() {
+        mainViewModel=ViewModelProviders.of(this).get(MainViewModel::class.java)
+        mainViewModel.imageUri.observe(this, androidx.lifecycle.Observer {
+            background_image.setImageURI(it)
+            sharedPrefrenceUtils.SaveData("imgUri",it)
+        })
         music_lists = getMusicListFromPhone(this)
 
         ablum_image.setOnClickListener(this)

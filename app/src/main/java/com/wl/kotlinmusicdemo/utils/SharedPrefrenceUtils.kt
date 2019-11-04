@@ -2,6 +2,7 @@ package com.wl.kotlinmusicdemo.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import com.google.gson.Gson
 import com.wl.kotlinmusicdemo.musicmodel.Music
 import java.sql.Savepoint
@@ -18,6 +19,8 @@ class SharedPrefrenceUtils(context: Context?) {
             editor?.putString(key,json)
         }else if (any is Int){
             editor?.putInt(key,any.toInt())
+        }else if (any is Uri){
+            editor?.putString(key,any.toString())
         }
         editor?.commit()
     }
@@ -32,6 +35,9 @@ class SharedPrefrenceUtils(context: Context?) {
         }else if (any is Int){
             var code=sharedPreferences?.getInt(key,0)
             return code
+        }else if (any is Uri){
+            var imgUri=sharedPreferences?.getString(key,"")
+            return  imgUri
         }
         return null
     }
