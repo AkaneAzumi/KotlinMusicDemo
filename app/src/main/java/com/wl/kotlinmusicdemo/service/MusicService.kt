@@ -25,7 +25,7 @@ import kotlin.random.nextInt
 class MusicService : Service() {
     private val mediaPlayer: MediaPlayer = MediaPlayer()
     private var list: MutableList<Music>? = null
-    private var currentMusic: Music? = null
+    private var currentMusic: Music?=null
     private var currentPostion: Int = 0
     private var timer: Timer? = null
     private var postProgress: TimerTask? = null
@@ -121,11 +121,14 @@ class MusicService : Service() {
 
     //播放音乐的共用方法
     fun onStart() {
+        currentMusic = list?.get(currentPostion)!!
+
+        EventBus.getDefault().post(ServiceToMain(currentPostion))
+
+        EventBus.getDefault().postSticky(currentMusic)
+        sharedPrefrenceUtils.SaveData("Music",currentMusic!!)
         try {
-            currentMusic = list?.get(currentPostion)
-            EventBus.getDefault().post(ServiceToMain(currentPostion))
-            EventBus.getDefault().postSticky(currentMusic)
-            sharedPrefrenceUtils.SaveData("Music",currentMusic!!)
+
             mediaPlayer.reset()
             mediaPlayer.setDataSource(currentMusic?.music_url)
             mediaPlayer.prepare()
@@ -226,7 +229,7 @@ class MusicService : Service() {
 
     @Subscribe
     fun getCtrlType(ctrlType: playCtrlType) {
-        when (ctrlType.playCtrlType) {
+        when (ctrlType.playCtrl) {
             playCtrlType.NEXT -> onNext()
             playCtrlType.PREVIOUS -> onPervoius()
             playCtrlType.PAUSE -> onPause()

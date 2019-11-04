@@ -16,8 +16,8 @@ class SharedPrefrenceUtils(context: Context?) {
         if (any is Music){
             var json=gson.toJson(any)
             editor?.putString(key,json)
-        }else if (any is ListCtrlCode){
-            editor?.putString(key,any.toString())
+        }else if (any is Int){
+            editor?.putInt(key,any.toInt())
         }
         editor?.commit()
     }
